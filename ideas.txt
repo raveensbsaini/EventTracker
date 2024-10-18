@@ -1,0 +1,17 @@
+## CLI Ideas
+- Track current window/screenshots/keyboard/mouse movements
+  - continously record how many keypress/mouse movements each second/minute
+  - Every 10 second record currently active window
+  - Every 5 minutes take a screenshot
+  - Allow users to visualize data using cli or a webapp
+- Task list manager
+  - Support adding new tasks with optional date/time for when you want to complete them
+  - The CLI allows adding/deleting/editing etc. and can give you all the tasks for a given time range
+- Pomodoro timer
+  - Sends notification for breaks and work time
+- Simple git
+  - Very simple git like implementation. Basically keeps track of history.
+- TUI
+  - A game like snake
+  - or typing tool
+
