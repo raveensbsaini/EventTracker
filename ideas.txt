@@ -15,3 +15,8 @@
   - A game like snake
   - or typing tool
 
+## database desgin (upto 5 years its fast)
+  #user can know keypress typing for day ,mouse clicking , touchscreen touches 
+  # user can see all screenshot of the day (288 screenshots for a day(max))
+  # user can see all window title of the day () 
+  # mouspress store after every mintue in database
