@@ -1,8 +1,5 @@
 import subprocess,shlex
-import re
-# def print(*args,**kwargs):
-#     return None
-    
+import re   
 def find_event():
     return_list = []
     with open("/proc/bus/input/devices","r") as file:
@@ -17,19 +14,18 @@ def find_event():
         EV_SND= None #(0x12): Sound events
         mouse = None
         for row in file_data:
-            print("-------------------------------------------------------")
             match_kbd = re.search("Handlers=.*?kbd.*",row)
             match_Handlers = re.search("Handlers=.*",row)
+            if match_Handlers == None:
+                continue
             match_mouse = re.search("Handlers=.*?mouse.*",row)
             match_ev = re.search("EV=(.*)",row)
             match_name = re.search('N: Name=(.*)',row)           
             match_eventx = re.search("event(\d+)",match_Handlers[0])
             eventx = int(match_eventx[1])
-            print("eventx = ",eventx)
             if match_ev != None:
                 match_ev =int(match_ev[1],16)
-                match_ev = bin(match_ev)[2:].zfill(16)
-                print(match_ev)
+                match_ev = bin(match_ev)[2:].zfill(16)             
                 if match_ev[-1] == "1":
                     EV_SYN=True 
                 if match_ev[-2] == "1":
@@ -46,14 +42,10 @@ def find_event():
                     EV_SND = True          
         
             if match_kbd != None and  EV_KEY == True:
-                print("keyboard events matches")
-                return_list.append((match_name[1][1:-1],eventx))
+                return_list.append((match_name[1][1:-1],eventx,"keypress"))
             elif match_mouse != None and EV_REL == True:
-                return_list.append((match_name[1][1:-1],eventx))
-
-            if match_mouse != None and EV_REL == True:
-                print("moue event matches")
-            print(return_list)
+                return_list.append((match_name[1][1:-1],eventx,"mousepress"))
+    print(return_list)
     return return_list
 if __name__ == "__main__":
     find_event()

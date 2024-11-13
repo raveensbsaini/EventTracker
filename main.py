@@ -11,25 +11,25 @@ database = Database('sqlite+aiosqlite:///database.db')
 list_of_events = functions.find_event()
 print(list_of_events)
   
-async def input(name,eventx):
+async def input(name,eventx,table_name):
     print("listening to event",eventx)
     filepath = f"/dev/input/event{eventx}"
     event_format = "llHHI"
     bytes_size = struct.calcsize(event_format)
     count = 0
 
-    async with aiofiles.open(filepath,"rb") as file:
+    async with aiofiles.open(filepath,"rb") as file:# this is upper because(time taking)
         while True:
             byte_array  = await file.read(bytes_size)
             if byte_array:
                 (tv_sec, tv_usec, ev_type, ev_code, ev_value) = struct.unpack(event_format, byte_array) 
                 timestamp = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(tv_sec)) + f".{tv_usec:06d}"
                 print(f"Time: {timestamp}, Type: {ev_type}, Code: {ev_code}, Value: {ev_value}")
-                if ev_type == 1: # I am bit sure does i still check it
-                        async with database.transaction():
-                            query = "INSERT INTO  keypress(name,event_key,event_value,time) as (:event_key,:event_value,timestamp)"
-                            values = {"event_key":ev_code,"event_value":ev_value,"time":time.time()}
-                            await database.execute(query=query,values=values)    
+                
+                async with database.transaction():
+                    query = "INSERT INTO  keypress(name,event_key,event_value,time) as (:event_key,:event_value,timestamp)"
+                    values = {"name":name,"event_key":ev_code,"event_value":ev_value,"time":time.time()}
+                    await database.execute(query=query,values=values)                        
             else:
                 print("========== didn't got byte_array")
                 break
@@ -45,5 +45,5 @@ async def window():
             query="insert into windows_title(title,)"
         await asyncio.sleep(10)
 async def main():
-    await asyncio.gather(*[input(name,eventx) for name,eventx in list_of_events ])
+    await asyncio.gather(*[input(name,eventx,table_name) for name,eventx,table_name in list_of_events ])
 asyncio.run(main())
