@@ -20,3 +20,11 @@
   # user can see all screenshot of the day (288 screenshots for a day(max))
   # user can see all window title of the day () 
   # mouspress store after every mintue in database
+## window_title saved whenever window_title changes
+## does i need to store all input from mouse?
+## purpose of cli
+  # user can know their screentime
+  # enable screensaver to ensure user is not watching anyting now
+  #list of highest viewing window titles based on their time uses
+  # a ui to takes request info from users
+
