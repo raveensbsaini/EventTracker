@@ -42,10 +42,10 @@ def find_event():
                     EV_SND = True          
         
             if match_kbd != None and  EV_KEY == True:
-                return_list.append((match_name[1][1:-1],eventx,"keypress"))
+                return_list.append((match_name[1][1:-1],eventx))
             elif match_mouse != None and EV_REL == True:
-                return_list.append((match_name[1][1:-1],eventx,"mousepress"))
-    print(return_list)
+                return_list.append((match_name[1][1:-1],eventx))
+    # print(return_list)
     return return_list
 if __name__ == "__main__":
     find_event()
