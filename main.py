@@ -46,6 +46,9 @@ async def window():
         except Exception as e:
             print("exception",e)
             return None
+async def screenshot():
+    while True:
+        pass
 async def main():
     await create_database()
     task_list = [asyncio.create_task(input(name,eventx)) for name,eventx in list_of_events]
