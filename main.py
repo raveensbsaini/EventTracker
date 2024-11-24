@@ -5,7 +5,9 @@ import asyncio
 import aiofiles
 import sys
 from databases import Database
+import os
 import functions
+import pyautogui
 list_of_events = functions.find_event()
 database = Database('sqlite+aiosqlite:///database.db')
 async def create_database():
@@ -34,9 +36,9 @@ async def input(name,eventx):
                 return None
 async def window():
     while True:
+        print("window")
         cmd = "xprop -id $(xprop -root _NET_ACTIVE_WINDOW | cut -d ' ' -f 5) WM_NAME"
         result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-        print(result.stdout)
         try:
             async with database.transaction():
                 query="INSERT INTO window_titles(name,time) VALUES(:name,:time);"
@@ -47,12 +49,26 @@ async def window():
             print("exception",e)
             return None
 async def screenshot():
-    while True:
-        pass
+    try:
+        current_path = os.getcwd() 
+        while True:
+            timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+            if os.path.exists(current_path + "/screenshots"):
+                pass
+            else:
+                os.mkdir("./screenshots")
+            file_path = os.getcwd() + "/screenshots/" + f"{timestamp}.png"
+            print(file_path)
+            a = pyautogui.screenshot(file_path)
+            a.save(file_path)
+            await asyncio.sleep(3)
+    except Exception as e:
+        print(e)
 async def main():
     await create_database()
     task_list = [asyncio.create_task(input(name,eventx)) for name,eventx in list_of_events]
     task_list.append(asyncio.create_task(window()))
+    task_list.append(asyncio.create_task(screenshot()))
     await asyncio.gather(*task_list)
     await database.disconnect()
 if __name__ == "__main__":
