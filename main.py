@@ -43,9 +43,6 @@ async def input(name, eventx):
                         time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(tv_sec))
                         + f".{tv_usec:06d}"
                     )
-                    print(
-                        f"Time: {timestamp}, Type: {ev_type}, Code: {ev_code}, Value: {ev_value}"
-                    )
                     async with database.transaction():
                         query = f"INSERT INTO  events(name,event_key,event_value,time) VALUES(:name,:event_key,:event_value,:time)"
                         values = {
@@ -58,8 +55,7 @@ async def input(name, eventx):
                 else:
                     break
             except Exception as e:
-                print(e)
-                return None
+                raise e
 
 
 async def window():
@@ -73,10 +69,7 @@ async def window():
                 await database.execute(query=query, values=values)
             await asyncio.sleep(10)
         except Exception as e:
-            print("exception", e)
-            return None
-
-
+            raise e
 async def screenshot():
     try:
         current_path = os.getcwd()
@@ -96,7 +89,7 @@ async def screenshot():
                 await database.execute(query=query,values = values)
             await asyncio.sleep(10)
     except Exception as e:
-        print(e)
+        raise e
 
 
 async def main():

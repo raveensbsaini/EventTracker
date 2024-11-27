@@ -9,3 +9,6 @@ screenshots/
 
 # Virtual environments
 .venv
+# addition files
+keymap.txt
+database.db
