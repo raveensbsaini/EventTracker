@@ -8,9 +8,24 @@ from databases import Database
 import os
 import functions
 import pyautogui
+from platformdirs import PlatformDirs
+
+app_name = "EventTracker"
+app_author = "Ravindra kumar saini"
+
+dirs = PlatformDirs(app_name, app_author)
+print("user_data_dir",dirs.user_data_dir)
+data_dirs = dirs.user_data_dir
+os.makedirs(data_dirs, exist_ok=True)
+
+filepath_database = os.path.join(data_dirs,"database.db")
+print(filepath_database)
 
 list_of_events = functions.find_event()
-database = Database("sqlite+aiosqlite:///database.db")
+database_uri = "sqlite+aiosqlite:///"+filepath_database
+print(database_uri)
+database = Database(database_uri)
+print("start from begining")
 
 
 async def create_database():
@@ -26,15 +41,19 @@ async def create_database():
 
 
 async def input(name, eventx):
+    global database
+    print("starting input",name,eventx)
     filepath = f"/dev/input/event{eventx}"
     event_format = "llHHI"
     bytes_size = struct.calcsize(event_format)
     async with aiofiles.open(
         filepath, "rb"
     ) as file:  # this is upper because(time taking)
+        print("opened file")
         while True:
             try:
                 byte_array = await file.read(bytes_size)
+                print(byte_array)
                 if byte_array:
                     (tv_sec, tv_usec, ev_type, ev_code, ev_value) = struct.unpack(
                         event_format, byte_array
@@ -43,6 +62,7 @@ async def input(name, eventx):
                         time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(tv_sec))
                         + f".{tv_usec:06d}"
                     )
+                    await databae.connect()
                     async with database.transaction():
                         query = f"INSERT INTO  events(name,event_key,event_value,time) VALUES(:name,:event_key,:event_value,:time)"
                         values = {
@@ -52,6 +72,8 @@ async def input(name, eventx):
                             "time": time.time(),
                         }
                         await database.execute(query=query, values=values)
+                        print("saved to database")
+                    await database.disconnect()
                 else:
                     break
             except Exception as e:
