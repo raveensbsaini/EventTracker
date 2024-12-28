@@ -11,7 +11,6 @@ import pyautogui
 from platformdirs import PlatformDirs
 import structlog
 
-
 log = structlog.get_logger()
 app_name = "EventTracker"
 app_author = "Ravindra kumar saini"
@@ -126,7 +125,7 @@ async def screenshot():
                 values = {"time":current_time,"location": filepath_screenshots}
                 await database.execute(query=query,values = values)
                 log.info("screenshot saved",location = filepath_screenshots)
-            await asyncio.sleep(10)
+            await asyncio.sleep(300)
     except Exception as e:
         log.error("cannot saved screenshot",error = e)
         raise e
